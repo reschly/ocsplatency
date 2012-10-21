@@ -1,5 +1,6 @@
 package com.reschly.ocsplatency;
 
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 import android.app.Activity;
@@ -94,6 +95,11 @@ public class OCSPLatencyActivity extends Activity implements OnClickListener {
 			{
 				result = "Error";
 				latencyResults = "DNS Error: " + e.getMessage();
+			}
+			catch (SocketTimeoutException e)
+			{
+				result = "Error";
+				latencyResults = "Timeout: No response after " + OCSPLatency.timeout + " milliseconds";
 			}
 			catch (Exception e)
 			{
