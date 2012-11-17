@@ -143,6 +143,11 @@ public class OCSPResponder
 	private static final int keynectisEVPort = 80;
 	private static final String keynectisEVDisplayName = "KEYNECTIS Extended Validation CA";
 	
+	private static final String incommonRequestString = "504f5354202f20485454502f312e300d0a436f6e74656e742d547970653a206170706c69636174696f6e2f6f6373702d726571756573740d0a436f6e74656e742d4c656e6774683a2038330d0a0d0a3051304f304d304b3049300906052b0e03021a05000414f6973f8d295195e2f4cef8b010bc14db856e4e6c0414484f5afa2f4a9a5ee050f36b7b55a5def5be345d021035bbeaa0955f802f9941c094cf088123";
+	private static final String incommonHost = "ocsp.incommon.org";
+	private static final int incommonPort = 80;
+	private static final String incomonDisplayName = "InCommon Server CA";	
+	
 	private static final String ipscaGlobalRequestString = "504f5354202f20485454502f312e300d0a436f6e74656e742d547970653a206170706c69636174696f6e2f6f6373702d726571756573740d0a436f6e74656e742d4c656e6774683a2038370d0a486f73743a206f6373706c6576656c3130312e69707363612e636f6d0d0a0d0a305530533051304f304d300906052b0e03021a05000414b2e49703197bb1d21f1c1ee1190fb962a1c72eec041415a69680b1154b31c3c29cf6e7130b4bf318cd8602141000000000000000000000000000000000000023";
 	private static final String ipscaGlobalHost = "ocsplevel101.ipsca.com";
 	private static final int ipscaGlobalPort = 80;
@@ -328,6 +333,7 @@ public class OCSPResponder
 		new OCSPResponder(hexStringToByteArray(globesslRequsetString), globesslHost, globesslPort, globesslDisplayName),
 		new OCSPResponder(hexStringToByteArray(godaddyRequestString), godaddyHost, godaddyPort, godaddyDisplayName),
 		new OCSPResponder(hexStringToByteArray(hpPrivateClass2RequestString), hpPrivateClass2Host, hpPrivateClass2Port, hpPrivateClass2DisplayName),
+		new OCSPResponder(hexStringToByteArray(incommonRequestString), incommonHost, incommonPort, incomonDisplayName),
 		new OCSPResponder(hexStringToByteArray(ipscaGlobalRequestString), ipscaGlobalHost, ipscaGlobalPort, ipscaGlobalDisplayName),
 		new OCSPResponder(hexStringToByteArray(ipscaLevel1RequestString), ipscaLevel1Host, ipscaLevel1Port, ipscaLevel1DisplayName),
 		new OCSPResponder(hexStringToByteArray(keynectisEVRequestString), keynectisEVHost, keynectisEVPort, keynectisEVDisplayName),
