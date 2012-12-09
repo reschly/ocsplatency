@@ -22,6 +22,7 @@ public class OCSPLatencyActivity extends Activity implements OnClickListener {
 	public static final String ERROR = "Error";
 	
 	private Button button;
+	private Button allButton;
 	private Spinner menu;
 	private EditText resultsBox;
 	private Toast toast;
@@ -36,6 +37,7 @@ public class OCSPLatencyActivity extends Activity implements OnClickListener {
         
         menu = (Spinner) findViewById(R.id.responder_menu);
         button = (Button) findViewById(R.id.submit_buton);
+        allButton = (Button) findViewById(R.id.submit_all_button);
         resultsBox = (EditText) findViewById(R.id.results_box);
         toast = Toast.makeText(this, null, Toast.LENGTH_LONG);
 
@@ -45,6 +47,7 @@ public class OCSPLatencyActivity extends Activity implements OnClickListener {
         menu.setAdapter(adapter);
         
         button.setOnClickListener(this);
+        allButton.setOnClickListener(this);
         
         resultsBox.setEnabled(false);        
     }
@@ -53,11 +56,7 @@ public class OCSPLatencyActivity extends Activity implements OnClickListener {
     
 	@Override
 	public void onClick(View v)
-	{
-		// TODO Auto-generated method stub
-		toast.setText("Checking " + String.valueOf(menu.getSelectedItem()));
-		toast.show();
-		
+	{	
 		int id = v.getId();
 		switch(id)
 		{
@@ -71,6 +70,16 @@ public class OCSPLatencyActivity extends Activity implements OnClickListener {
 				new OCSPLatencyCheck(selected).execute();
 								
 				break;
+			
+			case R.id.submit_all_button:
+				toast.setText("Checking All (reporting only)");
+				toast.show();
+		
+				allButton.setEnabled(false);
+				new OCSPLatencyCheckAll().execute();
+				
+				break;
+			
 			default:
 				
 		}	
@@ -135,7 +144,7 @@ public class OCSPLatencyActivity extends Activity implements OnClickListener {
 			resultsBox.setText(sb);
 			if (result.equals(FINISHED))
 			{
-				//new ResultsReporter(responder, timer, metrics).report();
+				new ResultsReporter(responder, timer, metrics).report();
 			}
 			menu.setEnabled(true);
 			button.setEnabled(true);
@@ -143,6 +152,53 @@ public class OCSPLatencyActivity extends Activity implements OnClickListener {
 		
 	}
     
+	private class OCSPLatencyCheckAll extends AsyncTask<Void, String, String> 
+	{
+		OCSPTimer timer;
+		NetworkMetrics metrics;
+		
+		public OCSPLatencyCheckAll()
+		{
+			super();			
+		}
+		
+
+		@Override
+		protected String doInBackground(Void... args)
+		{
+			String result = "Finished with all";
+			
+			for (OCSPResponder responder : OCSPResponder.getResponders())
+			{
+				try
+				{				
+					timer = OCSPLatency.checkLatency(responder.getRequest(), responder.getHost(), responder.getPort());
+					metrics = new NetworkMetrics((ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE));
+					new ResultsReporter(responder, timer, metrics).report();
+				}
+				catch (UnknownHostException e)
+				{
+					// Ignore
+				}
+				catch (SocketTimeoutException e)
+				{
+					// Ignore
+				}
+				catch (Exception e)
+				{
+					// Ignore
+				}
+			}
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(String result)
+		{
+			toast.setText(result);
+			toast.show();
+			allButton.setEnabled(true);
+		}    
     
-    
+	}
 }

@@ -25,6 +25,14 @@
         android:layout_height="wrap_content"
         android:layout_margin="5sp"
         android:text="@string/submit_button_text" />
+
+    <Button
+        android:id="@+id/submit_all_button"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5sp"
+        android:text="@string/submit_all_button" />
 
     <EditText
         android:id="@+id/results_box"

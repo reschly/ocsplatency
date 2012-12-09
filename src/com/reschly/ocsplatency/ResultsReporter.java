@@ -20,6 +20,7 @@ public class ResultsReporter
 	private static final String OCSP_KEY = "ocspMS";
 	private static final String NETWORK_TYPE_KEY = "networkType";
 	private static final String NETWORK_SUBTYPE_KEY = "networkSubtype";
+	private static boolean doReporting = false;
 	
 	private String responder;
 	private String host;
@@ -46,6 +47,9 @@ public class ResultsReporter
 	
 	public void report()
 	{
+		if (!doReporting)
+			return;
+		
 		HttpPost post = new HttpPost(postURL);
 		List<NameValuePair> pairs = new ArrayList<NameValuePair>(8);
 		try
@@ -63,7 +67,7 @@ public class ResultsReporter
 		}
 		catch (Exception e)
 		{
-			/* Intentionally ignoring reporting errors */
-		}
+			// Intentionally ignoring reporting errors 
+		} 
 	}
 }

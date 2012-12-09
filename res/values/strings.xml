@@ -4,6 +4,7 @@
     <string name="hello">Hello World, OCSPLatencyActivity!</string>
     <string name="app_name">OCSP Latency Check</string>
     <string name="top_menu">Choose an OCSP Responder</string>
-    <string name="submit_button_text">Check Latency</string>
+    <string name="submit_button_text">Check Responder Latency</string>
+    <string name="submit_all_button">Check All (background/reporting only)</string>
 
 </resources>
