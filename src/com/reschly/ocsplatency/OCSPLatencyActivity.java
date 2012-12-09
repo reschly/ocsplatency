@@ -3,7 +3,9 @@ package com.reschly.ocsplatency;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -16,13 +18,18 @@ import android.widget.Toast;
 
 public class OCSPLatencyActivity extends Activity implements OnClickListener {
 	
+	public static final String FINISHED = "Finished";
+	public static final String ERROR = "Error";
+	
 	private Button button;
 	private Spinner menu;
 	private EditText resultsBox;
 	private Toast toast;
+
 	
     /** Called when the activity is first created. */
-    @Override
+    @SuppressLint("ShowToast")
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
@@ -73,27 +80,30 @@ public class OCSPLatencyActivity extends Activity implements OnClickListener {
 	private class OCSPLatencyCheck extends AsyncTask<Void, String, String> 
 	{
 		OCSPResponder responder;
+		OCSPTimer timer;
 		String latencyResults;
 		
 		public OCSPLatencyCheck(String displayName)
 		{
 			super();
 			responder = OCSPResponder.findByDisplayname(displayName);
+			
 		}
 		
 
 		@Override
 		protected String doInBackground(Void... args)
 		{
-			String result = "Finished";
+			String result = FINISHED;
 			
 			try
 			{				
-				latencyResults = OCSPLatency.checkLatency(responder.getRequest(), responder.getHost(), responder.getPort()).toString();
+				timer = OCSPLatency.checkLatency(responder.getRequest(), responder.getHost(), responder.getPort());
+				latencyResults = timer.toString();
 			}
 			catch (UnknownHostException e)
 			{
-				result = "Error";
+				result = ERROR;
 				latencyResults = "DNS Error: " + e.getMessage();
 			}
 			catch (SocketTimeoutException e)
@@ -103,7 +113,7 @@ public class OCSPLatencyActivity extends Activity implements OnClickListener {
 			}
 			catch (Exception e)
 			{
-				result = "Error";
+				result = ERROR;
 				latencyResults = "Error: " + e.getMessage();
 			}
 			return result;
@@ -114,7 +124,19 @@ public class OCSPLatencyActivity extends Activity implements OnClickListener {
 		{
 			toast.setText(result);
 			toast.show();
-			resultsBox.setText("Responder: " + responder.getDisplayName() + "\n" + "Host: " + responder.getHost() + "\n" + latencyResults);
+			StringBuilder sb = new StringBuilder();
+			sb.append("Responder: " + responder.getDisplayName() + "\n" + "Host: " + responder.getHost() + "\n" + latencyResults);
+			NetworkMetrics metrics = null;
+			if (result.equals(FINISHED))
+			{
+				metrics = new NetworkMetrics((ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE));
+				sb.append(metrics);
+			}
+			resultsBox.setText(sb);
+			if (result.equals(FINISHED))
+			{
+				//new ResultsReporter(responder, timer, metrics).report();
+			}
 			menu.setEnabled(true);
 			button.setEnabled(true);
 		}
